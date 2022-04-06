@@ -100,14 +100,13 @@ axios.post(URL, newForm)
 
 
 
-
   render() {
     const { className } = this.props
-    
+    console.log(this.state.form.x, this.state.form.y, this.state.form.steps)
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-          <h3 id="coordinates">({this.state.form.x}, {this.state.form.y})</h3>
+          <h3 id="coordinates"> Coordinates ({this.state.form.x}, {this.state.form.y})</h3>
           <h3 id="steps">You moved {this.state.form.steps} {`${this.state.form.steps === 1 ? 'time' : 'times'}`}</h3>
         </div>
         <div id="grid">

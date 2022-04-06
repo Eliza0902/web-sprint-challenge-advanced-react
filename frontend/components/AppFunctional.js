@@ -14,35 +14,25 @@ const initialState = {
 };
 
 export default function AppFunctional(props) {
-  const [grid, setGrid] = useState([
-    null,
-    null,
-    null,
-    null,
-    "B",
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [grid, setGrid] = useState([null, null, null, null, "B", null, null, null, null]);
   const [message, setMessage] = useState("");
   const [x, setX] = useState(2);
   const [y, setY] = useState(2);
   const [steps, setSteps] = useState(0);
   const [email, setEmail] = useState("");
-
-  function updateLocation(id) {
+  
+  const updateLocation = (id) => {
  
     if (id === "left" && x != 1) {
-      setX(x - 1), setSteps(steps + 1), setMessage(""),setGrid(gridSwitch(x, y))
+      setX(x - 1), setSteps(steps + 1), setMessage(""), setGrid(gridSwitch(x-1,y))
     } else if (id === "right" && x != 3) {
-      setX(x + 1), setSteps(steps + 1), setMessage(""),setGrid(gridSwitch(x, y))
+      setX(x + 1), setSteps(steps + 1), setMessage(""),setGrid(gridSwitch(x+1,y))
     } else if (id === "up" && y != 1) {
-      setY(y - 1), setSteps(steps + 1), setMessage(""),setGrid(gridSwitch(x, y))
+      setY(y - 1), setSteps(steps + 1), setMessage(""),setGrid(gridSwitch(x,y-1))
     } else if (id === "down" && y != 3) {
-      setY(y + 1), setSteps(steps + 1), setMessage(""),setGrid(gridSwitch(x, y))
+      setY(y + 1), setSteps(steps + 1), setMessage(""),setGrid(gridSwitch(x,y+1))
     } else if (id === "reset") {
-      setX(2), setY(2), setSteps(0), setMessage(""),setGrid(gridSwitch(x, y))
+      setX(2), setY(2), setSteps(0), setMessage(""),setGrid(gridSwitch(2,2))
     } else if (id === "right" && x === 3) {
       setMessage("You can't go right");
     } else if (id === "left" && x === 1) {
@@ -52,11 +42,10 @@ export default function AppFunctional(props) {
     } else if (id === "down" && y === 3) {
       setMessage("You can't go down");
     }
-    setGrid(gridSwitch(x, y))
-    console.log(grid);
+   
   }
 
-  function gridSwitch(x, y) {
+const gridSwitch = (x, y) => {
     if (x === 1 && y === 1) {
       return(["B", null, null, null, null, null, null, null, null]);
     } else if (x === 2 && y === 1) {
@@ -79,27 +68,13 @@ export default function AppFunctional(props) {
   }
   
 
-  function onChange(key, value) {
-    this.setState({
-      ...this.state,
-      form: {...this.state.form, [key]: value},
-    })
-    }
-    function updateForm(evt) {
-    const name = evt.target.name;
-    const value = evt.target.value;
-    this.onChange(name, value)
-    }
     
-    function onSubmit(evt) {
+const onSubmit = (evt) => {
       evt.preventDefault()
-      this.addNew()
-      this.setState({
-        ...this.state,
-        form: {...this.state.form, ['email']: ''},
-      })
+      addNew()
+      setEmail('')
     }
-    function addNew(){
+const addNew =() => {
       const newForm = {
         x: x,
         y :y,
@@ -110,18 +85,13 @@ export default function AppFunctional(props) {
     axios.post(URL, newForm)
     .then(res => {
       console.log(res)
-      this.setState({
-        ...this.state,
-        message: [...this.state.message, res.data.message]
+      setMessage(res.data.message)
       })
-    })
+   
     .catch(err => {
-      this.setState({
-        ...this.state,
-        message: err.response.data.message,
-      })
-    })
-    }
+     
+    setMessage(err.response.data.message)
+  })}
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
@@ -144,7 +114,7 @@ export default function AppFunctional(props) {
         <div className={`square${grid[8] ? " active" : ""}`}>{grid[8]}</div>
       </div>
       <div className="info">
-        <h3 id="message">{message}</h3>
+        <h3 id="message"> {message} </h3>
       </div>
       <div id="keypad">
         <button onClick={(evt) => updateLocation("left")} id="left">
@@ -164,8 +134,8 @@ export default function AppFunctional(props) {
         </button>
       </div>
       <form>
-        <input id="email" type="email" placeholder="type email"></input>
-        <input id="submit" type="submit"></input>
+        <input onChange={evt => setEmail(evt.target.value)} id="email" type="email" placeholder="type email" value= {email}></input>
+        <input onClick={evt => onSubmit(evt)} id="submit" type="submit"></input>
       </form>
     </div>
   );
